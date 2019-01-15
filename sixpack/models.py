@@ -6,8 +6,8 @@ import random
 import re
 import redis
 
-from config import CONFIG as cfg
-from db import _key, msetbit, sequential_id, first_key_with_bit_set
+from sixpack.config import CONFIG as cfg
+from sixpack.db import _key, msetbit, sequential_id, first_key_with_bit_set
 
 # This is pretty restrictive, but we can always relax it later.
 VALID_EXPERIMENT_ALTERNATIVE_RE = re.compile(r"^[a-z0-9][a-z0-9\-_]*$", re.I)

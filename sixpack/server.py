@@ -2,7 +2,7 @@ import os
 import re
 from socket import inet_aton
 import sys
-from urllib import unquote
+from urllib.parse import unquote
 
 import dateutil.parser
 from redis import ConnectionError
@@ -12,20 +12,20 @@ from werkzeug.exceptions import HTTPException, NotFound
 from werkzeug.datastructures import Headers
 
 from . import __version__
-from api import participate, convert
+from sixpack.api import participate, convert
 
-from config import CONFIG as cfg
-from metrics import init_statsd
-from utils import to_bool
+from sixpack.config import CONFIG as cfg
+from sixpack.metrics import init_statsd
+from sixpack.utils import to_bool
 
 try:
-    import db
+    import sixpack.db
 except ConnectionError:
-    print "Redis is currently unavailable or misconfigured"
+    print ("Redis is currently unavailable or misconfigured")
     sys.exit()
 
-from models import Experiment, Client
-from utils import service_unavailable_on_connection_error, json_error, json_success
+from sixpack.models import Experiment, Client
+from sixpack.utils import service_unavailable_on_connection_error, json_error, json_success
 
 
 class CORSMiddleware(object):
@@ -273,7 +273,7 @@ def is_ignored_ip(ip_address):
 
 # Method to run with built-in server
 def create_app():
-    app = Sixpack(db.REDIS)
+    app = Sixpack(sixpack.db.REDIS)
     return CORSMiddleware(app)
 
 

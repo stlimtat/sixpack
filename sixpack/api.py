@@ -1,5 +1,5 @@
-from models import Experiment, Alternative, Client
-from config import CONFIG as cfg
+from sixpack.models import Experiment, Alternative, Client
+from sixpack.config import CONFIG as cfg
 
 
 def participate(experiment, alternatives, client_id,
