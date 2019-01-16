@@ -1,8 +1,7 @@
 FROM python:3-alpine3.8
 MAINTAINER Swee Tat Lim "limsweetat@spgroup.com.sg"
 EXPOSE 5000 5001
-ADD requirements.txt /sixpack/
-WORKDIR /sixpack
+ADD ./requirements.txt /sixpack/
 RUN apk add build-base; \
   pip install -r /sixpack/requirements.txt
 VOLUME /sixpack

@@ -15,12 +15,13 @@ services:
       - redis
     volumes:
       - ./:/sixpack/
-    environment:
-      SIXPACK_CONFIG: /sixpack/docker-config.yml
     ports:
       - "5000:5000"
-    command:
-      sh -c "/sixpack/bin/sixpack"
+    environment:
+      SIXPACK_CONFIG: /sixpack/docker-config.yml
+      SIXPACK_PORT: 5000
+    command: >
+      sh -c "python /sixpack/bin/sixpack"
 
   sixpack-web:
     image: sixpack:1.0.3
