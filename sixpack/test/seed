@@ -13,17 +13,24 @@ from sixpack.db import REDIS
 
 experiments = {
     'show-bieber': ['yes', 'no'],
-    'show-bieber': ['yes', 'no', 'call-me-maybe'],
+    'show-bieber-call': ['yes', 'no', 'call-me-maybe'],
     'blurry-buy-now': ['yes', 'no'],
     'button-color': ['blue', 'green', 'red', 'black', 'orange'],
     'solo-cup': ['red', 'green'],
-    'jose': ['troll', 'no-troll']
+    'jose': ['troll', 'no-troll'],
 }
+
+def convert(data):
+    if isinstance(data, bytes):  return data.decode()
+    if isinstance(data, dict):   return dict(map(convert, data.items()))
+    if isinstance(data, tuple):  return tuple(map(convert, data))
+    if isinstance(data, list):   return list(map(convert, data))
+    return data
 
 for d in range(1, 8):
 
     _date = date.today() - timedelta(days=d)
-    print _date
+    print (_date)
     # generate 20 client ids
     client_ids = []
     for i in range(1, 2000):
@@ -32,11 +39,12 @@ for d in range(1, 8):
     client_exp = []
     participations = {}
     for x in range(1, 10):
-        for experiment, alternatives in experiments.iteritems():
+        for experiment, alternatives in experiments.items():
             _id = random.choice(client_ids)
 
             client = Client(_id, REDIS)
-            experiment = Experiment.find_or_create(experiment, alternatives, redis=REDIS)
+            print("Experiment.find_or_create(" + experiment + "," + str(alternatives) + ")")
+            experiment = Experiment.find_or_create(convert(experiment), convert(alternatives), redis=REDIS)
 
             chosen_alt = random.choice(experiment.alternatives)
             chosen_alt.record_participation(client, _date)
@@ -48,11 +56,13 @@ for d in range(1, 8):
 
     for key, tup in enumerate(client_exp):
         if key % 2:
-            client_id, exp = tup
+            client_id, experiment = tup
             client = Client(client_id, REDIS)
-            experiment = Experiment.find(exp.name, REDIS)
+            print("Experiment.find(" + experiment.name + ")")
+            experiment = Experiment.find(experiment.name, REDIS)
+            print("Experiment.existing_alternative(" + client.client_id + ")")
             alternative = experiment.existing_alternative(client)
             alternative.record_conversion(client, _date)
             #alternative = experiment.convert(client, _date)
 
-print 'done'
+print ('done')

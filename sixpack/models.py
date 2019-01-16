@@ -1,6 +1,7 @@
 from datetime import datetime
 from hashlib import sha1
 from math import log
+from past.builtins import basestring
 import operator
 import random
 import re
@@ -74,11 +75,14 @@ class Experiment(object):
         return objectified
 
     def initialize_alternatives(self, alternatives):
+        result = []
         for alternative_name in alternatives:
             if not Alternative.is_valid(alternative_name):
                 raise ValueError('invalid alternative name')
-
-        return [Alternative(n, self, redis=self.redis) for n in alternatives]
+            if isinstance(alternative_name, bytes):
+                alternative_name = alternative_name.decode('utf-8')
+            result.append(Alternative( alternative_name, self, redis=self.redis))
+        return result
 
     def save(self):
         pipe = self.redis.pipeline()
@@ -359,6 +363,9 @@ class Experiment(object):
         alts = self.get_alternative_names()
         keys = [_key("p:{0}:{1}:all".format(self.name, alt)) for alt in alts]
         altkey = first_key_with_bit_set(keys=keys, args=[self.sequential_id(client)])
+        if isinstance(altkey, bytes):
+            altkey = altkey.decode()
+        print ("alts=(" + str(alts) + ") keys=(" + str(keys) + ") altkey=(" + str(altkey) + ")" )
         if altkey:
             idx = keys.index(altkey)
             return Alternative(alts[idx], self, redis=self.redis)
@@ -807,5 +814,7 @@ class Alternative(object):
 
     @staticmethod
     def is_valid(alternative_name):
+        if (isinstance(alternative_name, bytes)):
+            alternative_name = alternative_name.decode('utf-8')
         return (isinstance(alternative_name, basestring) and
                 VALID_EXPERIMENT_ALTERNATIVE_RE.match(alternative_name) is not None)
