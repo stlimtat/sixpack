@@ -2,8 +2,8 @@ closure==20180204
 decorator==4.3.0
 fakeredis==0.4.0
 Flask-Assets==0.12
-Flask-DebugToolbar==0.7.1
-Flask-SeaSurf==0.2.3
+Flask-DebugToolbar==0.10.1
+Flask-SeaSurf==0.2.2
 Flask-Cors==3.0.7
 Flask==1.0.2
 future==0.17.1

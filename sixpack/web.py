@@ -2,19 +2,19 @@ import urllib
 
 from flask import Flask
 from flask import render_template, abort, request, url_for, redirect, jsonify, make_response
-from flask.ext.seasurf import SeaSurf
-from flask.ext.assets import Environment, Bundle
-from flask.ext.cors import CORS
+from flask_seasurf import SeaSurf
+from flask_assets import Environment, Bundle
+from flask_cors import CORS
 from flask_debugtoolbar import DebugToolbarExtension
 from markdown import markdown
 from werkzeug.contrib.fixers import ProxyFix
 
 from . import __version__
-from config import CONFIG as cfg
-import db
-from models import Experiment
-from analysis import ExportExperiment
-import utils
+from sixpack.config import CONFIG as cfg
+import sixpack.db as db
+from sixpack.models import Experiment
+from sixpack.analysis import ExportExperiment
+import sixpack.utils as utils
 
 import re
 
